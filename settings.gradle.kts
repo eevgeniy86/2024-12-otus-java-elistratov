@@ -4,14 +4,24 @@
  * The settings file is used to specify which projects to include in your build.
  * For more detailed information on multi-project builds, please refer to https://docs.gradle.org/8.12/userguide/multi_project_builds.html in the Gradle documentation.
  */
-
-plugins {
-    // Apply the foojay-resolver plugin to allow automatic download of JDKs
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
-//    id("com.github.johnrengelman.shadow") version "8.1.1"
-}
-
-
-
 rootProject.name = "2024-12-otus-java-elistratov"
 include("hw01-gradle")
+
+pluginManagement {
+    val foojayResolverConvention: String by settings
+//    val jgitver: String by settings
+    val dependencyManagement: String by settings
+//    val springframeworkBoot: String by settings
+    val johnrengelmanShadow: String by settings
+//    val jib: String by settings
+//    val protobufVer: String by settings
+//    val sonarlint: String by settings
+//    val spotless: String by settings
+
+    plugins {
+        // Apply the foojay-resolver plugin to allow automatic download of JDKs
+        id("org.gradle.toolchains.foojay-resolver-convention") version foojayResolverConvention
+        id("com.github.johnrengelman.shadow") version johnrengelmanShadow
+        id("io.spring.dependency-management") version dependencyManagement
+    }
+}
