@@ -10,10 +10,6 @@ dependencies {
 
 }
 
-//tasks.jar {
-//    manifest.attributes["Main-Class"] = "ru.otus.HelloOtus"
-//}
-
 tasks {
     named<ShadowJar>("shadowJar") {
         archiveBaseName.set("gradleHelloWorld")

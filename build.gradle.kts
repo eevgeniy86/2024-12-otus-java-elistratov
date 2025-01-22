@@ -1,12 +1,16 @@
 import org.gradle.plugins.ide.idea.model.IdeaLanguageLevel
 import io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension
-
-
+import org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
+import name.remal.gradle_plugins.sonarlint.SonarLintExtension
 
 
 plugins {
     idea
     id("io.spring.dependency-management")
+    id("org.springframework.boot") apply false
+    id("com.diffplug.spotless") apply false
+    id("fr.brouillard.oss.gradle.jgitver")
+    id("name.remal.sonarlint") apply false
 }
 
 idea {
@@ -27,11 +31,30 @@ allprojects {
     }
 
     val guava: String by project
+    val testcontainersBom: String by project
+    val protobufBom: String by project
 
     apply(plugin = "io.spring.dependency-management")
     dependencyManagement {
         dependencies {
+            imports {
+                mavenBom(BOM_COORDINATES)
+                mavenBom("org.testcontainers:testcontainers-bom:$testcontainersBom")
+                mavenBom("com.google.protobuf:protobuf-bom:$protobufBom")
+            }
             dependency("com.google.guava:guava:$guava")
+        }
+    }
+
+    configurations.all {
+        resolutionStrategy {
+            failOnVersionConflict()
+        }
+    }
+
+    configurations.all {
+        resolutionStrategy {
+            failOnVersionConflict()
         }
     }
 }
@@ -46,6 +69,43 @@ subprojects {
     tasks.withType<JavaCompile> {
         options.encoding = "UTF-8"
         options.compilerArgs.addAll(listOf("-Xlint:all,-serial,-processing"))
+
+        dependsOn("spotlessApply")
+    }
+
+    apply<com.diffplug.gradle.spotless.SpotlessPlugin>()
+    configure<com.diffplug.gradle.spotless.SpotlessExtension> {
+        java {
+            palantirJavaFormat("2.39.0")
+        }
+    }
+
+    plugins.apply(fr.brouillard.oss.gradle.plugins.JGitverPlugin::class.java)
+    extensions.configure<fr.brouillard.oss.gradle.plugins.JGitverPluginExtension> {
+        strategy("PATTERN")
+        nonQualifierBranches("main,master")
+        tagVersionPattern("\${v}\${<meta.DIRTY_TEXT}")
+        versionPattern(
+            "\${v}\${<meta.COMMIT_DISTANCE}\${<meta.GIT_SHA1_8}" +
+                    "\${<meta.QUALIFIED_BRANCH_NAME}\${<meta.DIRTY_TEXT}-SNAPSHOT"
+        )
+    }
+
+    apply<name.remal.gradle_plugins.sonarlint.SonarLintPlugin>()
+    configure<SonarLintExtension> {
+        nodeJs {
+            detectNodeJs = false
+            logNodeJsNotFound = false
+        }
+    }
+
+    tasks.withType<Test> {
+        useJUnitPlatform()
+        testLogging.showExceptions = true
+        reports {
+            junitXml.required.set(true)
+            html.required.set(true)
+        }
     }
 }
 
@@ -60,21 +120,3 @@ tasks {
         }
     }
 }
-
-
-//dependencies {
-//    testImplementation(platform("org.junit:junit-bom:5.10.0"))
-//    testImplementation("org.junit.jupiter:junit-jupiter")
-//    implementation(libs.guava)
-//
-//}
-
-//tasks.jar {
-//    manifest.attributes["Main-Class"] = "ru.otus.HelloOtus"
-//}
-
-
-
-//tasks.test {
-//    useJUnitPlatform()
-//}
