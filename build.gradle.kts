@@ -55,6 +55,17 @@ allprojects {
     configurations.all {
         resolutionStrategy {
             failOnVersionConflict()
+
+            force("javax.servlet:servlet-api:2.5")
+            force("commons-logging:commons-logging:1.1.1")
+            force("commons-lang:commons-lang:2.5")
+            force("org.codehaus.jackson:jackson-core-asl:1.8.8")
+            force("org.codehaus.jackson:jackson-mapper-asl:1.8.8")
+            force("commons-io:commons-io:2.16.1")
+            force("org.eclipse.jgit:org.eclipse.jgit:6.9.0.202403050737-r")
+            force("org.apache.commons:commons-compress:1.26.1")
+            force("com.google.errorprone:error_prone_annotations:2.36.0")
+            force("org.jetbrains:annotations:19.0.0")
         }
     }
 }
