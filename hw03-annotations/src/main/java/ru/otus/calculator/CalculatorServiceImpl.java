@@ -1,4 +1,4 @@
-package ru.otus;
+package ru.otus.calculator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,13 +11,18 @@ public class CalculatorServiceImpl implements CalculatorService {
         this.ioService = ioService;
     }
 
-
-
     @Override
     public void readTwoDigitsAndMultiply() {
-        int d1 = Integer.parseInt(ioService.readString());
-        int d2 = Integer.parseInt(ioService.readString());
-        logger.info("Entered numbers:{}, {}", d1, d2);
+        int d1;
+        int d2;
+        try {
+            d1 = Integer.parseInt(ioService.readString());
+            d2 = Integer.parseInt(ioService.readString());
+            logger.info("Entered numbers:{}, {}", d1, d2);
+        } catch (NumberFormatException nfe) {
+            logger.error("Entered NaN");
+            throw nfe;
+        }
 
         multiplyAndOutResult(d1, d2);
     }
@@ -42,7 +47,6 @@ public class CalculatorServiceImpl implements CalculatorService {
     public void longCalculations() {
         ioService.out("Ответ на главный вопрос жизни, вселенной и всего такого");
         try {
-            // Thread.currentThread().interrupt();
             Thread.sleep(5000);
         } catch (InterruptedException e) {
             logger.error("Answer to Life, the Universe, and Everything question never will be given");

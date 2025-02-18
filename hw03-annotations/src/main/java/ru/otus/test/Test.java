@@ -1,4 +1,4 @@
-package ru.otus.calculator;
+package ru.otus.test;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

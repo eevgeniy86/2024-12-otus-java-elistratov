@@ -1,4 +1,4 @@
-package ru.otus;
+package ru.otus.calculator;
 
 import java.io.InputStream;
 import java.io.PrintStream;

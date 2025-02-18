@@ -1,4 +1,4 @@
-package ru.otus;
+package ru.otus.calculator;
 
 public interface CalculatorService {
     void readTwoDigitsAndMultiply();
