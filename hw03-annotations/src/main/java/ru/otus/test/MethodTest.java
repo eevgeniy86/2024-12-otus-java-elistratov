@@ -4,22 +4,22 @@ import java.lang.reflect.Method;
 
 class MethodTest {
     private Method method;
-    private boolean result;
+    private Exception result;
 
     MethodTest(Method method) {
         this.method = method;
-        this.result = false;
+        this.result = null;
     }
 
     Method getMethod() {
         return this.method;
     }
 
-    boolean getResult() {
+    Exception getResult() {
         return result;
     }
 
-    void setResult(boolean result) {
+    void setResult(Exception result) {
         this.result = result;
     }
 
