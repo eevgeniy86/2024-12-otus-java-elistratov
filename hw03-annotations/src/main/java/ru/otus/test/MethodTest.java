@@ -4,27 +4,27 @@ import java.lang.reflect.Method;
 
 class MethodTest {
     private Method method;
-    private Exception result;
+    private Exception error;
 
     MethodTest(Method method) {
         this.method = method;
-        this.result = null;
+        this.error = null;
     }
 
     Method getMethod() {
         return this.method;
     }
 
-    Exception getResult() {
-        return result;
+    Exception getError() {
+        return error;
     }
 
-    void setResult(Exception result) {
-        this.result = result;
+    void setError(Exception error) {
+        this.error = error;
     }
 
     @Override
     public String toString() {
-        return "test " + method.getName() + " result is " + result;
+        return "test " + method.getName() + " result is " + error;
     }
 }

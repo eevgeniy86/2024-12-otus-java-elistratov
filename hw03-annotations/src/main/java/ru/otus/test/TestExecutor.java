@@ -50,7 +50,7 @@ public class TestExecutor {
         int positive = 0;
         for (MethodTest methodTest : testResults) {
             System.out.println(methodTest.toString());
-            if (methodTest.getResult() == null) {
+            if (methodTest.getError() == null) {
                 positive++;
             }
         }
@@ -65,7 +65,7 @@ public class TestExecutor {
                 invokeBunchOfMethods(testObject, beforeMethods);
                 invokeMethod(testObject, test.getMethod());
             } catch (Exception e) {
-                test.setResult(e);
+                test.setError(e);
             }
             invokeBunchOfMethods(testObject, afterMethods);
 

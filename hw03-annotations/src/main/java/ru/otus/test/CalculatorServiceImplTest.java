@@ -18,8 +18,7 @@ public class CalculatorServiceImplTest {
     }
 
     @After
-    void finish() {
-    }
+    void finish() {}
 
     @Test
     void shouldReturnCorrectAnswerToMainQuestion() {
