@@ -64,7 +64,6 @@ public class TestExecutor {
             try {
                 invokeBunchOfMethods(testObject, beforeMethods);
                 invokeMethod(testObject, test.getMethod());
-//                test.setResult(true);
             } catch (Exception e) {
                 test.setResult(e);
             }
