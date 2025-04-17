@@ -5,7 +5,8 @@ package ru.calculator;
 -Xmx256m
 -XX:+HeapDumpOnOutOfMemoryError
 -XX:HeapDumpPath=./logs/heapdump.hprof
--XX:+UseG1GC
+-XX:+UseParallelGC
+-XX:-UseG1GC
 -Xlog:gc=debug:file=./logs/gc-%p-%t.log:tags,uptime,time,level:filecount=5,filesize=10m
 */
 
