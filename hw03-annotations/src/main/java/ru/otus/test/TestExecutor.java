@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@SuppressWarnings({"java:S106", "java:S112", "java:S3011", "java:S1141"})
 public class TestExecutor {
     public static void main(String[] args) {
         Class<?> clazz = CalculatorServiceImplTest.class;

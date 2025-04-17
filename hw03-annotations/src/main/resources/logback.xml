@@ -8,11 +8,6 @@
     </appender>
 
     <appender name="APP_LOG" class="ch.qos.logback.core.FileAppender">
-<!--        <filter class="ch.qos.logback.classic.filter.LevelFilter">-->
-<!--            <level>INFO</level>-->
-<!--            <onMatch>ACCEPT</onMatch>-->
-<!--            <onMismatch>DENY</onMismatch>-->
-<!--        </filter>-->
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>logs/archive/roll-%d{yyyy-MM-dd}.%i.zip</fileNamePattern>
             <!-- each file should be at most 1MB, keep 60 days worth of history, but at most 20MB -->
