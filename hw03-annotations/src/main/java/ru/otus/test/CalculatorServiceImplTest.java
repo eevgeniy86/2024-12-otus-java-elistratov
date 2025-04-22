@@ -7,6 +7,7 @@ import ru.otus.calculator.CalculatorServiceImpl;
 import ru.otus.calculator.IOService;
 import ru.otus.calculator.StreamsIOService;
 
+@SuppressWarnings({"java:S3252", "java:S1186"})
 public class CalculatorServiceImplTest {
     private IOService ioService;
     private CalculatorService calculator;
@@ -38,7 +39,8 @@ public class CalculatorServiceImplTest {
     void shouldMultiplyNumbers() {
         String n1 = "13";
         String n2 = "7";
-        String expected = String.format(n1 + " * " + n2 + " = " + 7 * 13);
+        int res = 7 * 13;
+        String expected = String.format("%s * %s = %s", n1, n2, res);
         Mockito.when(ioService.readString()).thenReturn(n1).thenReturn(n2);
         calculator.readTwoDigitsAndMultiply();
         Mockito.verify(ioService).out(Mockito.eq(expected));
