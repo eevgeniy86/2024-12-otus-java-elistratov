@@ -8,6 +8,8 @@ rootProject.name = "2024-12-otus-java-elistratov"
 include("hw01-gradle")
 include("hw02-generics")
 include("hw03-annotations")
+include("hw04-gc")
+
 
 pluginManagement {
     val foojayResolverConvention: String by settings
