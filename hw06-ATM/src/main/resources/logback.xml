@@ -1,0 +1,43 @@
+<configuration scan="true" scanPeriod="10 seconds">
+    <jmxConfigurator />
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="APP_LOG" class="ch.qos.logback.core.FileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/archive/roll-%d{yyyy-MM-dd}.%i.zip</fileNamePattern>
+            <!-- each file should be at most 1MB, keep 60 days worth of history, but at most 20MB -->
+            <maxFileSize>1MB</maxFileSize>
+            <maxHistory>60</maxHistory>
+            <totalSizeCap>10MB</totalSizeCap>
+        </rollingPolicy>
+        <file>logs/hw06-ATM.log</file>
+        <encoder>
+            <pattern>%date %level [%thread] [%file:%line] %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="ru.otus.atm.Main" level="info" additivity="true">
+        <appender-ref ref="APP_LOG" />
+    </logger>
+
+    <logger name="ru.otus.atm.ATM" level="info" additivity="true">
+        <appender-ref ref="APP_LOG" />
+    </logger>
+
+    <logger name="ru.otus.atm.receiver.MoneyBundleReceiverImpl" level="info" additivity="true">
+        <appender-ref ref="APP_LOG" />
+    </logger>
+
+    <logger name="ru.otus.atm.dispenser.MoneyBundleDispenserImpl" level="info" additivity="true">
+        <appender-ref ref="APP_LOG" />
+    </logger>
+
+    <root level="info">
+        <appender-ref ref="STDOUT" />
+    </root>
+</configuration>
