@@ -20,10 +20,10 @@ public class Ioc {
 
     static class InitialClassInvocationHandler implements InvocationHandler {
         private static final Logger logger = LoggerFactory.getLogger(InitialClassInvocationHandler.class);
-        private final InitialClassInterface myClass;
+        private final Object myClass;
         private final Set<String> loggedMethods;
 
-        InitialClassInvocationHandler(InitialClassInterface myClass) {
+        InitialClassInvocationHandler(Object myClass) {
             this.myClass = myClass;
 
             List<String> loggedMethodsList = Arrays.stream(myClass.getClass().getDeclaredMethods())
@@ -33,7 +33,7 @@ public class Ioc {
                         }
                         return false;
                     })
-                    .map(m -> m.getName() + Arrays.toString(m.getParameterTypes()))
+                    .map(this::getMethodSignature)
                     .toList();
 
             this.loggedMethods = new HashSet<>(loggedMethodsList);
@@ -41,7 +41,7 @@ public class Ioc {
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            if (loggedMethods.contains(method.getName() + Arrays.toString(method.getParameterTypes()))) {
+            if (loggedMethods.contains(getMethodSignature(method))) {
                 logger.atInfo()
                         .setMessage("executed method: {}, params: {}")
                         .addArgument(method.getName())
@@ -49,6 +49,10 @@ public class Ioc {
                         .log();
             }
             return method.invoke(myClass, args);
+        }
+
+        private String getMethodSignature(Method method) {
+            return method.getName() + Arrays.toString(method.getParameterTypes());
         }
     }
 }
