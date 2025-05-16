@@ -1,6 +1,7 @@
 package ru.otus.atm;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -20,19 +21,21 @@ import ru.otus.atm.receiver.ReceivingCartridge;
 class ATMTest {
     ATM atm;
     Map<NominalValue, Integer> moneyToPut;
-    String moneyReceivedMessage = "your money received";
-    String moneyNotReceivedMessage = "can't receive such a lot of money";
-    String moneyNotDispensedMessage = "incorrect sum";
-    String moneyDispensedMessage = "take your money";
+    String moneyNotReceivedErrorMessage = "Received money bundle can't be stored";
+    String moneyNotDispensedErrorMessage = "Incorrect sum requested";
+    Map<NominalValue, BanknotesReceiver> receiverCartridges;
+    Map<NominalValue, BanknotesDispenser> dispenserCartridges;
+    int receiverCartridgeVolume = 1;
+    int dispenserCartridgeQuantity = 1;
 
     @BeforeEach
     void setUp() {
-        Map<NominalValue, BanknotesDispenser> dispenserCartridges = new EnumMap<>(NominalValue.class);
-        Map<NominalValue, BanknotesReceiver> receiverCartridges = new EnumMap<>(NominalValue.class);
+        dispenserCartridges = new EnumMap<>(NominalValue.class);
+        receiverCartridges = new EnumMap<>(NominalValue.class);
 
         for (NominalValue nominal : NominalValue.values()) {
-            dispenserCartridges.put(nominal, new DispensingCartridge(1));
-            receiverCartridges.put(nominal, new ReceivingCartridge(1));
+            dispenserCartridges.put(nominal, new DispensingCartridge(dispenserCartridgeQuantity));
+            receiverCartridges.put(nominal, new ReceivingCartridge(receiverCartridgeVolume));
         }
         MoneyBundleDispenser dispenser = new MoneyBundleDispenserImpl(dispenserCartridges);
         MoneyBundleReceiver receiver = new MoneyBundleReceiverImpl(receiverCartridges);
@@ -52,33 +55,44 @@ class ATMTest {
     @Test
     @DisplayName("Can put money in ATM")
     void receiveMoneyTest() {
-        assertThat(atm.receiveMoney(moneyToPut)).isEqualTo(moneyReceivedMessage);
+        atm.receiveMoney(moneyToPut);
+
+        for (Map.Entry<NominalValue, Integer> entry : moneyToPut.entrySet()) {
+            assertThat(receiverCartridges.get(entry.getKey()).getRemainingSpaceForBanknotes())
+                    .isEqualTo(receiverCartridgeVolume - entry.getValue());
+        }
     }
 
     @Test
     @DisplayName("Can't put more money than volume in ATM")
     void notReceiveToMuchMoneyTest() {
-        assertThat(atm.receiveMoney(moneyToPut)).isEqualTo(moneyReceivedMessage);
-        assertThat(atm.receiveMoney(moneyToPut)).isEqualTo(moneyNotReceivedMessage);
+        atm.receiveMoney(moneyToPut);
+        RuntimeException e = assertThrows(RuntimeException.class, () -> atm.receiveMoney(moneyToPut));
+        assertThat(e.getMessage()).isEqualTo(moneyNotReceivedErrorMessage);
     }
 
     @Test
     @DisplayName("Can't get money of wrong nominal from ATM")
     void notDispenseWrongNominalMoneyTest() {
-        assertThat(atm.dispenseMoney(5)).isEqualTo(moneyNotDispensedMessage);
+        RuntimeException e = assertThrows(RuntimeException.class, () -> atm.dispenseMoney(5));
+        assertThat(e.getMessage()).isEqualTo(moneyNotDispensedErrorMessage);
     }
 
     @Test
     @DisplayName("Can get money from ATM")
     void dispenseMoneyTest() {
-        assertThat(atm.dispenseMoney(50)).isEqualTo(moneyDispensedMessage);
+        atm.dispenseMoney(50);
+
+        assertThat(dispenserCartridges.get(NominalValue.FIFTY).getBanknotesQuantity())
+                .isEqualTo(dispenserCartridgeQuantity - 1);
     }
 
     @Test
     @DisplayName("Can't get to much money from ATM")
     void notDispenseToMuchMoneyTest() {
         atm.dispenseMoney(50);
-        assertThat(atm.dispenseMoney(50)).isEqualTo(moneyNotDispensedMessage);
+        RuntimeException e = assertThrows(RuntimeException.class, () -> atm.dispenseMoney(5));
+        assertThat(e.getMessage()).isEqualTo(moneyNotDispensedErrorMessage);
     }
 
     @Test

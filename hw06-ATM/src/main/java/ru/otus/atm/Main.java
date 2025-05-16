@@ -36,12 +36,19 @@ public class Main {
 
         logger.atInfo().setMessage("Rest: {}").addArgument(atm.getMoneyRest()).log();
 
-        logger.atInfo().setMessage(atm.receiveMoney(res)).log();
-        logger.atInfo().setMessage(atm.receiveMoney(res)).log();
-        logger.atInfo().setMessage(atm.dispenseMoney(5)).log();
-        logger.atInfo().setMessage(atm.dispenseMoney(50)).log();
-        logger.atInfo().setMessage(atm.dispenseMoney(1100)).log();
-        logger.atInfo().setMessage(atm.dispenseMoney(50)).log();
-        logger.atInfo().setMessage("Rest: {}").addArgument(atm.getMoneyRest()).log();
+        try {
+            atm.receiveMoney(res);
+            atm.receiveMoney(res);
+            atm.dispenseMoney(5);
+            atm.dispenseMoney(50);
+            atm.dispenseMoney(1100);
+            atm.dispenseMoney(50);
+            logger.atInfo()
+                    .setMessage("Rest: {}")
+                    .addArgument(atm.getMoneyRest())
+                    .log();
+        } catch (Exception e) {
+            logger.atError().setMessage(e.getClass() + ": " + e.getMessage()).log();
+        }
     }
 }

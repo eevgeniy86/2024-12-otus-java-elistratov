@@ -34,7 +34,7 @@ public class ATM {
         return moneyRest;
     }
 
-    public String dispenseMoney(int money) {
+    public void dispenseMoney(int money) {
         int rest = money;
         Map<NominalValue, Integer> remainingMoneyBundle = dispenser.getRemainingMoneyBundle();
         Map<NominalValue, Integer> result = new EnumMap<>(NominalValue.class);
@@ -52,11 +52,11 @@ public class ATM {
             }
         }
         if (rest > 0) {
-            logger.atInfo()
+            logger.atError()
                     .setMessage("Requested incorrect sum: {}")
                     .addArgument(money)
                     .log();
-            return "incorrect sum";
+            throw new IllegalArgumentException("Incorrect sum requested");
         } else {
             dispenser.dispenseMoneyBundle(result);
             logger.atInfo()
@@ -64,20 +64,19 @@ public class ATM {
                     .addArgument(money)
                     .addArgument(result)
                     .log();
-            return "take your money";
         }
     }
 
-    public String receiveMoney(Map<NominalValue, Integer> moneyBundle) {
+    public void receiveMoney(Map<NominalValue, Integer> moneyBundle) {
         Map<NominalValue, Integer> remainingSpaceForMoneyBundle = receiver.getRemainingSpaceForMoneyBundle();
         for (Map.Entry<NominalValue, Integer> entry : moneyBundle.entrySet()) {
             if (remainingSpaceForMoneyBundle.get(entry.getKey()) < entry.getValue()) {
-                logger.atInfo()
+                logger.atError()
                         .setMessage("Received money bundle can't be stored for nominal: {}, quantity {}")
                         .addArgument(entry.getKey())
                         .addArgument(entry.getValue())
                         .log();
-                return "can't receive such a lot of money";
+                throw new IllegalArgumentException("Received money bundle can't be stored");
             }
         }
         receiver.receiveMoneyBundle(moneyBundle);
@@ -85,6 +84,5 @@ public class ATM {
                 .setMessage("Received money bundle: {}")
                 .addArgument(moneyBundle)
                 .log();
-        return "your money received";
     }
 }
