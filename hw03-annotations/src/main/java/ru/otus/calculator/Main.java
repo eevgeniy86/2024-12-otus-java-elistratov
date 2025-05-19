@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 // TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+@SuppressWarnings("java:S106")
 public class Main {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
