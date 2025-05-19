@@ -1,15 +1,12 @@
 package ru.otus.listener.homework;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import ru.otus.listener.Listener;
 import ru.otus.model.Message;
 import ru.otus.model.ObjectForMessage;
 
 public class HistoryListener implements Listener, HistoryReader {
-    private HashSet<Message> messages;
+    private final Set<Message> messages;
 
     public HistoryListener() {
         this.messages = new HashSet<>();
@@ -17,9 +14,9 @@ public class HistoryListener implements Listener, HistoryReader {
 
     @Override
     public void onUpdated(Message msg) {
-        if (messages.contains(msg)) {
-            messages.remove(msg);
-        }
+
+        messages.remove(msg);
+
         ObjectForMessage obj = new ObjectForMessage();
         if (msg.getField13().getData() != null) {
             List<String> temp = new ArrayList<>(msg.getField13().getData());
