@@ -64,8 +64,8 @@ class ProcessorThrowExceptionInEvenSecondTest {
                 new Message.Builder(id).field10("field10").field13(field13).build();
 
         // when
-        processor.process(message);
+        var processedMessage = processor.process(message);
         // then
-        Assertions.assertThat(processor.process(message)).isEqualTo(message);
+        Assertions.assertThat(processedMessage).isEqualTo(message);
     }
 }
