@@ -41,4 +41,31 @@ class ProcessorThrowExceptionInEvenSecondTest {
         // then
         Assertions.assertThat(e.getMessage()).isEqualTo(exceptionMessage);
     }
+
+    @Test
+    void NonExceptionTest() {
+        // given
+
+        LocalDateTime dateTime = LocalDateTime.of(1, 1, 1, 1, 1, 1);
+
+        var dateTimeProvider = mock(DateTimeProvider.class);
+        when(dateTimeProvider.getDate()).thenReturn(dateTime);
+
+        var processor = new ProcessorThrowExceptionInEvenSecond(dateTimeProvider);
+
+        var id = 100L;
+        var data = "33";
+        var field13 = new ObjectForMessage();
+        var field13Data = new ArrayList<String>();
+        field13Data.add(data);
+        field13.setData(field13Data);
+
+        var message =
+                new Message.Builder(id).field10("field10").field13(field13).build();
+
+        // when
+        processor.process(message);
+        // then
+        Assertions.assertThat(processor.process(message)).isEqualTo(message);
+    }
 }
