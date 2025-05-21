@@ -2,6 +2,8 @@ package ru.otus.jsonhandler.dataprocessor;
 
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,10 +16,13 @@ public class ProcessorAggregator implements Processor {
     public Map<String, Double> process(List<Measurement> data) {
         Map<String, Double> processed = data.stream()
                 .collect(Collectors.groupingBy(Measurement::name, Collectors.summingDouble(Measurement::value)));
+        SortedMap<String, Double> processedSorted = new TreeMap<>(processed);
+
         logger.atInfo()
                 .setMessage("Aggregated measurements with result: {}")
-                .addArgument(processed)
+                .addArgument(processedSorted)
                 .log();
-        return processed;
+
+        return processedSorted;
     }
 }

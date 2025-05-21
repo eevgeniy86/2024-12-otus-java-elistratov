@@ -22,8 +22,7 @@ class ProcessorTest {
         System.out.println(tempDir);
 
         // given
-        var inputDataFileName =
-                "C:\\OTUS\\2024-12-otus-java-elistratov\\hw08-json-handler\\src\\test\\resources\\inputData.json";
+        var inputDataFileName = "inputData.json";
         var outputDataFileName = "outputData.json";
         var fullOutputFilePath = String.format("%s%s%s", tempDir, File.separator, outputDataFileName);
 
