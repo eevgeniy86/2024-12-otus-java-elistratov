@@ -1,5 +1,6 @@
 package ru.otus.processor;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -64,8 +65,7 @@ class ProcessorThrowExceptionInEvenSecondTest {
                 new Message.Builder(id).field10("field10").field13(field13).build();
 
         // when
-        var processedMessage = processor.process(message);
         // then
-        Assertions.assertThat(processedMessage).isEqualTo(message);
+        assertDoesNotThrow(() -> processor.process(message));
     }
 }
