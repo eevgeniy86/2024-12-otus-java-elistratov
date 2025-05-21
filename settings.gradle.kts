@@ -11,6 +11,7 @@ include("hw03-annotations")
 include("hw04-gc")
 include("hw05-autologging")
 include ("hw06-ATM")
+include ("hw07-messages-handler")
 
 pluginManagement {
     val foojayResolverConvention: String by settings
