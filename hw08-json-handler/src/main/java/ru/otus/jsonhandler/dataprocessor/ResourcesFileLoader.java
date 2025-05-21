@@ -17,7 +17,7 @@ public class ResourcesFileLoader implements Loader {
     private final ObjectMapper mapper;
     private final File file;
 
-    public ResourcesFileLoader(String fileName) throws RuntimeException {
+    public ResourcesFileLoader(String fileName) throws FileProcessException {
         URI path;
         try {
             path = Objects.requireNonNull(ResourcesFileLoader.class.getResource(String.format("/%s", fileName)))
@@ -31,7 +31,7 @@ public class ResourcesFileLoader implements Loader {
     }
 
     @Override
-    public List<Measurement> load() throws RuntimeException {
+    public List<Measurement> load() throws FileProcessException {
         List<Measurement> list;
         try {
             list = Arrays.asList(mapper.readValue(file, Measurement[].class));
