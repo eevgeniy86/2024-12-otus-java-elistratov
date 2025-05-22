@@ -22,10 +22,8 @@ public class FileSerializer implements Serializer {
 
     @Override
     public void serialize(Map<String, Double> data) throws FileProcessException {
-        try {
-            FileOutputStream output = new FileOutputStream(file);
+        try (FileOutputStream output = new FileOutputStream(file)) {
             mapper.writeValue(output, data);
-            output.close();
         } catch (IOException ioe) {
             logger.atError().setMessage(ioe.getMessage()).log();
             throw new FileProcessException(ioe);
