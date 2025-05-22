@@ -10,8 +10,9 @@ include("hw02-generics")
 include("hw03-annotations")
 include("hw04-gc")
 include("hw05-autologging")
-include ("hw06-ATM")
-include ("hw07-messages-handler")
+include("hw06-ATM")
+include("hw07-messages-handler")
+include("hw08-json-handler")
 
 pluginManagement {
     val foojayResolverConvention: String by settings
@@ -36,4 +37,3 @@ pluginManagement {
 
     }
 }
-
