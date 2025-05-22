@@ -16,8 +16,6 @@ public class ProcessorAggregator implements Processor {
         Map<String, Double> processedSorted = data.stream()
                 .collect(Collectors.groupingBy(
                         Measurement::name, TreeMap::new, Collectors.summingDouble(Measurement::value)));
-        //      SortedMap<String, Double> processedSorted = new TreeMap<>(processed);
-
         logger.atInfo()
                 .setMessage("Aggregated measurements with result: {}")
                 .addArgument(processedSorted)
