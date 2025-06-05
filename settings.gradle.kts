@@ -13,6 +13,8 @@ include("hw05-autologging")
 include("hw06-ATM")
 include("hw07-messages-handler")
 include("hw08-json-handler")
+include("hw09-homemade-orm")
+
 
 pluginManagement {
     val foojayResolverConvention: String by settings
