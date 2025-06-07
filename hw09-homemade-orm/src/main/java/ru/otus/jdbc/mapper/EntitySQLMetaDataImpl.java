@@ -1,5 +1,8 @@
 package ru.otus.jdbc.mapper;
 
+import java.lang.reflect.Field;
+import java.util.stream.Collectors;
+
 public class EntitySQLMetaDataImpl implements EntitySQLMetaData {
     private final String selectAllSqlString;
     private final String selectByIdSqlString;
@@ -7,19 +10,25 @@ public class EntitySQLMetaDataImpl implements EntitySQLMetaData {
     private final String updateSqlString;
 
     public EntitySQLMetaDataImpl(EntityClassMetaData<?> metaData) {
-        if (metaData.getName().equals("ru.otus.crm.model.Client")) {
-            selectAllSqlString = "select * from client";
-            selectByIdSqlString = "select id, name from client where id  = ?";
-            insertSqlString = "insert into client(name) values (?)";
-            updateSqlString = "update client set name = ? where id = ?";
-        } else if (metaData.getName().equals("ru.otus.crm.model.Manager")) {
-            selectAllSqlString = "select * from manager";
-            selectByIdSqlString = "select no, label, param1 from manager where no  = ?";
-            insertSqlString = "insert into manager(label, param1) values (?, ?)";
-            updateSqlString = "update manager set label = ?, param1 = ? where no = ?";
-        } else {
-            throw new IllegalArgumentException("Unknown datatype object");
-        }
+        selectAllSqlString = "select * from " + metaData.getName();
+        selectByIdSqlString = "select "
+                + metaData.getAllFields().stream().map(Field::getName).collect(Collectors.joining(", ")) + " from "
+                + metaData.getName() + " where " + metaData.getIdField().getName() + " = ?";
+        StringBuilder sb = new StringBuilder();
+        insertSqlString = sb.append("insert into ")
+                .append(metaData.getName())
+                .append("(")
+                .append(metaData.getFieldsWithoutId().stream()
+                        .map(Field::getName)
+                        .collect(Collectors.joining(", ")))
+                .append(") values (")
+                .append("?,".repeat(metaData.getFieldsWithoutId().size()))
+                .deleteCharAt(sb.length() - 1)
+                .append(")")
+                .toString();
+        updateSqlString = "update " + metaData.getName() + " set "
+                + metaData.getFieldsWithoutId().stream().map(Field::getName).collect(Collectors.joining(" = ?, "))
+                + " = ? where " + metaData.getIdField().getName() + " = ?";
     }
 
     @Override
