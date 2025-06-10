@@ -12,6 +12,7 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
     private final Constructor<T> constructor;
     private final Field idField;
     private final List<Field> allFields;
+    private final List<Field> withoutIdFields;
 
     public EntityClassMetaDataImpl(Class<T> clazz) {
 
@@ -34,6 +35,9 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
         idField = idf;
 
         allFields = List.of(clazz.getDeclaredFields());
+
+        withoutIdFields = new ArrayList<>(allFields);
+        withoutIdFields.remove(idField);
     }
 
     @Override
@@ -58,8 +62,6 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
 
     @Override
     public List<Field> getFieldsWithoutId() {
-        List<Field> result = new ArrayList<>(allFields);
-        result.remove(idField);
-        return result;
+        return withoutIdFields;
     }
 }

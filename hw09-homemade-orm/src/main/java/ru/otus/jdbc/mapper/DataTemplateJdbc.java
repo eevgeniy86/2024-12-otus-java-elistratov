@@ -3,6 +3,7 @@ package ru.otus.jdbc.mapper;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,14 +37,7 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
             try {
                 if (rs.next()) {
 
-                    var obj = classMetaData.getConstructor().newInstance();
-                    var fields = classMetaData.getAllFields();
-                    for (Field f : fields) {
-                        f.setAccessible(true);
-                        f.set(obj, rs.getObject(f.getName()));
-                    }
-
-                    return obj;
+                    return constructObject(rs);
                 }
                 return null;
             } catch (SQLException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
@@ -61,19 +55,19 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
                     try {
 
                         while (rs.next()) {
-                            var obj = classMetaData.getConstructor().newInstance();
-                            var fields = classMetaData.getAllFields();
-                            for (Field f : fields) {
-                                f.set(obj, rs.getObject(f.getName()));
-                            }
+                            var obj = constructObject(rs);
                             objList.add(obj);
                         }
                         return objList;
-                    } catch (SQLException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+                    } catch (SQLException
+                            | InstantiationException
+                            | IllegalAccessException
+                            | InvocationTargetException e) {
                         throw new DataTemplateException(e);
                     }
                 })
-                .orElseThrow(() -> new RuntimeException("Unexpected error"));
+                .orElseThrow(() -> new DataTemplateException(
+                        new RuntimeException("Can't find data for class " + classMetaData.getName())));
     }
 
     @Override
@@ -87,7 +81,7 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
                         try {
                             return f.get(client);
                         } catch (IllegalAccessException e) {
-                            throw new RuntimeException(e);
+                            throw new DataTemplateException(e);
                         }
                     })
                     .toList();
@@ -108,7 +102,7 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
                         try {
                             return f.get(client);
                         } catch (IllegalAccessException e) {
-                            throw new RuntimeException(e);
+                            throw new DataTemplateException(e);
                         }
                     })
                     .toList());
@@ -118,5 +112,16 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
         } catch (Exception e) {
             throw new DataTemplateException(e);
         }
+    }
+
+    private T constructObject(ResultSet rs)
+            throws SQLException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        var obj = classMetaData.getConstructor().newInstance();
+        var fields = classMetaData.getAllFields();
+        for (Field f : fields) {
+            f.setAccessible(true);
+            f.set(obj, rs.getObject(f.getName()));
+        }
+        return obj;
     }
 }
