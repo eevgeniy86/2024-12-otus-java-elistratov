@@ -46,10 +46,8 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
                     return obj;
                 }
                 return null;
-            } catch (SQLException e) {
+            } catch (SQLException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
                 throw new DataTemplateException(e);
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-                throw new RuntimeException(e);
             }
         });
     }
@@ -71,10 +69,8 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
                             objList.add(obj);
                         }
                         return objList;
-                    } catch (SQLException e) {
+                    } catch (SQLException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
                         throw new DataTemplateException(e);
-                    } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-                        throw new RuntimeException(e);
                     }
                 })
                 .orElseThrow(() -> new RuntimeException("Unexpected error"));

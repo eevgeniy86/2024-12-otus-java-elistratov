@@ -10,7 +10,7 @@ import java.util.List;
 public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
     private final String classSimpleName;
     private final Constructor<T> constructor;
-    private Field idField;
+    private final Field idField;
     private final List<Field> allFields;
 
     public EntityClassMetaDataImpl(Class<T> clazz) {
@@ -21,16 +21,17 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
         } catch (NoSuchMethodException nsme) {
             throw new RuntimeException(nsme);
         }
-
+        Field idf = null;
         for (Field f : clazz.getDeclaredFields()) {
             if (Arrays.stream(f.getDeclaredAnnotations())
                     .anyMatch(a -> a.annotationType().equals(Id.class))) {
-                idField = f;
+                idf = f;
             }
         }
-        if (idField == null) {
+        if (idf == null) {
             throw new RuntimeException("Id element not found");
         }
+        idField = idf;
 
         allFields = List.of(clazz.getDeclaredFields());
     }
