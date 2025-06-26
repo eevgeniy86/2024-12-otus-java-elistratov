@@ -25,17 +25,17 @@ import ru.otus.jdbc.mapper.*;
 @State(Scope.Thread)
 @BenchmarkMode(Mode.SingleShotTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
-@SuppressWarnings({"java:S125", "java:S1481"})
-public class DbVsCacheTest {
+@SuppressWarnings({"java:S125", "java:S1481", "java:S2187"})
+public class DbVsCacheMeasurement {
     private static final String URL = "jdbc:postgresql://localhost:5430/demoDB";
     private static final String USER = "usr";
     private static final String PASSWORD = "pwd";
-    private static final Logger logger = LoggerFactory.getLogger(DbVsCacheTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(DbVsCacheMeasurement.class);
     private static DBServiceClient dbServiceClient;
 
     public static void main(String[] args) throws RunnerException {
         var opt = new OptionsBuilder()
-                .include(DbVsCacheTest.class.getSimpleName())
+                .include(DbVsCacheMeasurement.class.getSimpleName())
                 .forks(1)
                 .build();
         new Runner(opt).run();
@@ -46,12 +46,6 @@ public class DbVsCacheTest {
         var dataSource = new DriverManagerDataSource(URL, USER, PASSWORD);
         flywayMigrations(dataSource);
         dbServiceClient = getDbServiceClient(dataSource);
-
-        //        var clientSecond = dbServiceClient.saveClient(new Client("dbServiceSecond"));
-        //        var clientSecondSelected = dbServiceClient
-        //                .getClient(clientSecond.getId())
-        //                .orElseThrow(() -> new RuntimeException("Client not found, id:" + clientSecond.getId()));
-        //        logger.info("clientSecondSelected:{}", clientSecondSelected);
     }
 
     @State(Scope.Benchmark)
