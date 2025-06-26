@@ -25,7 +25,6 @@ import ru.otus.jdbc.mapper.*;
 @State(Scope.Thread)
 @BenchmarkMode(Mode.SingleShotTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
-@SuppressWarnings({"java:S125", "java:S1481", "java:S2187"})
 public class DbVsCacheMeasurement {
     private static final String URL = "jdbc:postgresql://localhost:5430/demoDB";
     private static final String USER = "usr";
