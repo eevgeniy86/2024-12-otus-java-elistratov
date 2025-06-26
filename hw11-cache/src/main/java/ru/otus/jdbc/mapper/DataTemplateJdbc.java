@@ -124,4 +124,14 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
         }
         return obj;
     }
+
+    //    public T copyObject(T object) throws InvocationTargetException, InstantiationException, IllegalAccessException
+    // {
+    //        var copy = classMetaData.getConstructor().newInstance();
+    //        for (Field f : classMetaData.getAllFields()) {
+    //            f.setAccessible(true);
+    //            f.set(copy, f.get(object));
+    //        }
+    //        return copy;
+    //    }
 }
