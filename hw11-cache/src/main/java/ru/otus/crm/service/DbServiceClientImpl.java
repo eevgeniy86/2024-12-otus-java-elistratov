@@ -73,8 +73,12 @@ public class DbServiceClientImpl implements DBServiceClient {
 
     private void putToCache(Client client) {
         if (this.cache != null) {
-            cache.put(String.valueOf(client.getId()), new Client(client.getId(), client.getName()));
+            cache.put(getKeyForCache(client), new Client(client.getId(), client.getName()));
         }
+    }
+
+    private String getKeyForCache(Client client) {
+        return String.valueOf(client.getId());
     }
 
     private Optional<Client> getFromCache(long id) {
