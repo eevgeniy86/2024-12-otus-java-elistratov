@@ -33,6 +33,8 @@ allprojects {
     val guava: String by project
     val testcontainersBom: String by project
     val protobufBom: String by project
+    val jmh: String by project
+
 
     apply(plugin = "io.spring.dependency-management")
     dependencyManagement {
@@ -43,6 +45,8 @@ allprojects {
                 mavenBom("com.google.protobuf:protobuf-bom:$protobufBom")
             }
             dependency("com.google.guava:guava:$guava")
+            dependency("org.openjdk.jmh:jmh-core:$jmh")
+            dependency("org.openjdk.jmh:jmh-generator-annprocess:$jmh")
         }
     }
 
