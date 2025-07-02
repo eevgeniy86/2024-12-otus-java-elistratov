@@ -14,6 +14,7 @@ include("hw06-ATM")
 include("hw07-messages-handler")
 include("hw08-json-handler")
 include("hw09-homemade-orm")
+include("hw10-hibernate")
 include("hw11-cache")
 
 pluginManagement {
