@@ -1,0 +1,115 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<style>
+
+    table {
+        border: 1px solid grey;
+        border-collapse: collapse;
+    }
+    td {border: 1px solid grey;}
+
+</style>
+
+<head>
+    <title>Клиенты</title>
+    <script>
+        function postClient() {
+            const clientNameTextBox = document.getElementById('clientName');
+            const clientStreetTextBox = document.getElementById('clientStreet');
+            const clientPhonesTextBox = document.getElementById('clientPhones');
+            const newClientIdContainer = document.getElementById('newClientIdContainer');
+
+            const name = clientNameTextBox.value;
+            const street = clientStreetTextBox.value;
+            const phones = clientPhonesTextBox.value.split(',').map(value => {return {"number": value};});
+
+            const jsonData = {
+                "name": name,
+                "address": {
+                    "street": street
+                },
+                "phones": phones
+                };
+            const cleaned = removeEmptyNodes(jsonData);
+            fetch('api/clients', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(cleaned)}).then(response => response.json()).then(id => newClientIdContainer.innerHTML = JSON.stringify(id));
+        }
+
+        function removeEmptyNodes(obj) {
+            // Check if the current object is an array
+            if (Array.isArray(obj)) {
+                // Filter out empty arrays and recursively call removeEmptyNodes on non-empty elements
+                return obj
+                    .map(removeEmptyNodes)
+                    .filter(item => !(item === null || item === '' || (Array.isArray(item) && item.length === 0) || (typeof item === 'object' && !Array.isArray(item) && Object.keys(item).length === 0)));
+            }
+            // Check if the current object is an actual object
+            if (typeof obj === 'object' && obj !== null) {
+                // Iterate over the keys of the object
+                Object.keys(obj).forEach(key => {
+					// Recursively call removeEmptyNodes on each key
+					obj[key] = removeEmptyNodes(obj[key]);
+					// Delete the key if it is an empty node
+						if (obj[key] === null || obj[key] === '' || (Array.isArray(obj[key]) && obj[key].length === 0) || (typeof obj[key] === 'object' && !Array.isArray(obj[key]) && Object.keys(obj[key]).length === 0)) {
+							delete obj[key];
+						}
+            }	);
+            return obj;
+            }
+			// Return the object if it's neither an array nor an object
+			return obj;
+		}
+    </script>
+</head>
+<body>
+
+<h4>Список клиентов</h4>
+<table style="width: 800px">
+    <thead>
+    <tr>
+        <td style="width: 50px">Id</td>
+        <td style="width: 250px">Имя</td>
+        <td style="width: 250px">Адрес</td>
+        <td style="width: 250px">Телефоны</td>
+    </tr>
+    </thead>
+    <tbody>
+    <#list clients as client>
+    <tr>
+        <td>${client.id}</td>
+        <td>
+            <#if client.name?has_content>
+            ${client.name}
+            </#if>
+        </td>
+
+        <td>
+            <#if client.address?has_content>
+            ${client.address.id}: ${client.address.street}
+            </#if>
+        </td>
+        <td>
+            <#if client.phones?has_content>
+                <#list client.phones as phone>
+                    ${phone.id}: ${phone.number} <br>
+                </#list>
+            </#if>
+        </td>
+    </tr>
+    </#list>
+    </tbody>
+</table>
+
+<h4>Создать нового клиента</h4>
+<label for="clientName">Введите имя: </label><input type="text" id = "clientName" placeholder="Имя">
+<br>
+<label for="clientStreet">Введите улицу: </label><input type="text" id = "clientStreet" placeholder="Улица">
+<br>
+<label for="clientPhones">Введите телефоны (через запятую): </label><input type="text" id = "clientPhones" placeholder="Телефоны">
+<br>
+<button onclick="postClient()">Создать</button>
+<pre id = "newClientIdContainer"></pre>
+</body>
+</html>
