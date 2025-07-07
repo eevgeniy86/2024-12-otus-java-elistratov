@@ -18,6 +18,7 @@ import ru.otus.crm.dbmigrations.MigrationsExecutorFlyway;
 import ru.otus.crm.model.Address;
 import ru.otus.crm.model.Client;
 import ru.otus.crm.model.Phone;
+import ru.otus.crm.service.DBServiceClient;
 import ru.otus.crm.service.DbServiceClientImpl;
 import ru.otus.webserver.helpers.FileSystemHelper;
 import ru.otus.webserver.server.UsersWebServer;
@@ -46,43 +47,37 @@ public class WebServerWithBasicSecurityDemo {
     private static final Logger log = LoggerFactory.getLogger(WebServerWithBasicSecurityDemo.class);
     public static final String HIBERNATE_CFG_FILE = "hibernate.cfg.xml";
 
-    public static void main(String[] args) throws Exception {
-
+    public static DBServiceClient prepareDatabase() {
         var configuration = new Configuration().configure(HIBERNATE_CFG_FILE);
 
         var dbUrl = configuration.getProperty("hibernate.connection.url");
         var dbUserName = configuration.getProperty("hibernate.connection.username");
         var dbPassword = configuration.getProperty("hibernate.connection.password");
-
         new MigrationsExecutorFlyway(dbUrl, dbUserName, dbPassword).executeMigrations();
-
         var sessionFactory =
                 HibernateUtils.buildSessionFactory(configuration, Client.class, Address.class, Phone.class);
-
         var transactionManager = new TransactionManagerHibernate(sessionFactory);
-        ///
         var clientTemplate = new DataTemplateHibernate<>(Client.class);
-        ///
-        var dbServiceClient = new DbServiceClientImpl(transactionManager, clientTemplate);
-        dbServiceClient.saveClient(new Client("dbServiceFirst"));
+        return new DbServiceClientImpl(transactionManager, clientTemplate);
+    }
 
+    public static void main(String[] args) throws Exception {
+        var dbServiceClient = prepareDatabase();
+        dbServiceClient.saveClient(new Client("dbServiceFirst"));
         Address addressForPhoned = new Address(null, "111");
         Client clientPhoned = new Client(null, "dbServicePhoned", addressForPhoned, List.of(new Phone(null, "12345")));
         dbServiceClient.saveClient(clientPhoned);
-
         var client1 = new Client(
                 null,
                 "Vasya",
                 new Address(null, "AnyStreet"),
                 List.of(new Phone(null, "13-555-22"), new Phone(null, "14-666-333")));
         dbServiceClient.saveClient(client1);
-
         var clientSecond = dbServiceClient.saveClient(new Client("dbServiceSecond"));
         var clientSecondSelected = dbServiceClient
                 .getClient(clientSecond.getId())
                 .orElseThrow(() -> new RuntimeException("Client not found, id:" + clientSecond.getId()));
         log.info("clientSecondSelected:{}", clientSecondSelected);
-        ///
         dbServiceClient.saveClient(new Client(clientSecondSelected.getId(), "dbServiceSecondUpdated"));
         var clientUpdated = dbServiceClient
                 .getClient(clientSecondSelected.getId())
@@ -91,24 +86,19 @@ public class WebServerWithBasicSecurityDemo {
 
         log.info("All clients");
         dbServiceClient.findAll().forEach(client -> log.info("client:{}", client));
-        ///////
         Gson gson = new GsonBuilder()
                 .excludeFieldsWithoutExposeAnnotation()
                 .serializeNulls()
                 .setPrettyPrinting()
                 .create();
         TemplateProcessor templateProcessor = new TemplateProcessorImpl(TEMPLATES_DIR);
-
         String hashLoginServiceConfigPath =
                 FileSystemHelper.localFileNameOrResourceNameToFullPath(HASH_LOGIN_SERVICE_CONFIG_NAME);
         PathResourceFactory pathResourceFactory = new PathResourceFactory();
         Resource configResource = pathResourceFactory.newResource(URI.create(hashLoginServiceConfigPath));
-
         LoginService loginService = new HashLoginService(REALM_NAME, configResource);
-
         UsersWebServer usersWebServer = new UsersWebServerWithBasicSecurity(
                 WEB_SERVER_PORT, loginService, dbServiceClient, gson, templateProcessor);
-
         usersWebServer.start();
         usersWebServer.join();
     }
