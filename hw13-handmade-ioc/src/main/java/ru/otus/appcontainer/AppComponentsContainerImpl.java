@@ -24,8 +24,6 @@ public final class AppComponentsContainerImpl implements AppComponentsContainer 
         var urls = new ArrayList<>(ClasspathHelper.forJavaClassPath());
         urls.addAll(ClasspathHelper.forPackage(packageString));
 
-        ClasspathHelper.forPackage("org.slf4j.*");
-
         var confBuilder = new ConfigurationBuilder()
                 .setScanners(Scanners.SubTypes.filterResultsBy(c -> true))
                 .setUrls(urls)
