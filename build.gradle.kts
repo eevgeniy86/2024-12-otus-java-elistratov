@@ -36,6 +36,10 @@ allprojects {
     val jmh: String by project
     val jetty: String by project
     val reflections: String by project
+    val freemarker: String by project
+    val bootstrap: String by project
+    val springDocOpenapiUi: String by project
+    val jsr305: String by project
 
 
     apply(plugin = "io.spring.dependency-management")
@@ -56,7 +60,13 @@ allprojects {
             dependency("org.eclipse.jetty:jetty-http:$jetty")
             dependency("org.eclipse.jetty:jetty-io:$jetty")
             dependency("org.eclipse.jetty:jetty-util:$jetty")
+            dependency("org.freemarker:freemarker:$freemarker")
+
             dependency("org.reflections:reflections:$reflections")
+
+            dependency("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springDocOpenapiUi")
+            dependency("com.google.code.findbugs:jsr305:$jsr305")
+
 
         }
     }
@@ -94,7 +104,7 @@ subprojects {
 
     tasks.withType<JavaCompile> {
         options.encoding = "UTF-8"
-        options.compilerArgs.addAll(listOf("-Xlint:all,-serial,-processing"))
+        options.compilerArgs.addAll(listOf("-parameters", "-Xlint:all,-serial,-processing"))
 
         dependsOn("spotlessApply")
     }

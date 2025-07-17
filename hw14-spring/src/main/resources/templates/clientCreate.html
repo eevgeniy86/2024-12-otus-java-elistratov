@@ -1,0 +1,53 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8"/>
+    <title>Client create</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        label {
+            display: inline-block;
+            width: 100px;
+        }
+
+        input:read-only {
+            background: lightgray;
+        }
+
+        .row {
+            margin-top: 10px;
+        }
+    </style>
+
+</head>
+<body>
+
+
+
+
+
+
+<form id="create-form" th:action="@{/client/save}" th:object="${form}" th:method="post" accept-charset="utf-8">
+
+
+
+    <h1>Создать нового клиента</h1>
+        <label for="clientName">Введите имя: </label>
+        <input type="text" id = "clientName" placeholder="Имя" th:field="*{name}">
+        <br>
+        <label for="clientStreet">Введите улицу: </label>
+        <input type="text" id = "clientStreet" placeholder="Улица" th:field="*{street}">
+        <br>
+        <label for="clientPhones">Введите телефоны (через запятую): </label>
+        <input type="text" id = "clientPhones" placeholder="Телефоны" th:field="*{phonesString}" >
+        <br>
+        <button type="submit">Save with form</button>
+</form>
+
+
+
+</body>
+</html>
