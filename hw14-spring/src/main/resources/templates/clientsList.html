@@ -1,0 +1,46 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<style>
+
+    table {
+    border: 1px solid grey;
+    border-collapse: collapse;
+    }
+    td {border: 1px solid grey;}
+
+</style>
+
+<head>
+    <meta charset="UTF-8"/>
+    <title>Клиенты</title>
+</head>
+<body>
+
+<h1>Список клиентов</h1>
+<table style="width: 800px"  class="clients">
+    <thead>
+    <tr>
+        <td style="width: 50px">Id</td>
+        <td style="width: 250px">Имя</td>
+        <td style="width: 250px">Адрес</td>
+        <td style="width: 250px">Телефоны</td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="client : ${clients}">
+        <td th:text="${client.id}"></td>
+    <td th:text="${client.name}"></td>
+    <td th:if="${client.address}" th:text="${client.address.id + ': ' + client.address.street}"> </td>
+    <td th:unless="${client.address}" th:text="''"> </td>
+        <td th:if="${client.phones}">
+         <p   th:each="phone : ${client.phones}"  th:text="${phone.id + ': ' + phone.number}"  ></p>
+        </td>
+    <td th:unless="${client.phones}" th:text="''"> </td>
+    </tr>
+    </tbody>
+</table>
+<br>
+<a th:href="@{/client/create}" href="clientCreate.html">New client</a>
+
+</body>
+</html>
