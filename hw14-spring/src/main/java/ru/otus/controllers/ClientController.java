@@ -28,7 +28,7 @@ public class ClientController {
 
     @GetMapping("/client/create")
     public String clientCreateView(Model model) {
-        model.addAttribute("form", new ClientForm());
+        model.addAttribute("form", new ClientForm(null, null, null));
         return "clientCreate";
     }
 

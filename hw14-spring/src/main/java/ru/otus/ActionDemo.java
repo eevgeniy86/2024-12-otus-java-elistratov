@@ -38,19 +38,19 @@ public class ActionDemo implements CommandLineRunner {
 
         // получаем клиента
         var clientSecondSelected = dbServiceClient
-                .getClient(clientPhonedSaved.getId())
-                .orElseThrow(() -> new RuntimeException("Client not found, id:" + clientPhoned.getId()));
+                .getClient(clientPhonedSaved.id())
+                .orElseThrow(() -> new RuntimeException("Client not found, id:" + clientPhoned.id()));
         log.info(">>> clientPhonedSelected:{}", clientSecondSelected);
 
         // обновляем клиента
         dbServiceClient.saveClient(new Client(
-                clientSecondSelected.getId(),
+                clientSecondSelected.id(),
                 "dbServicePhonedUpdated",
                 new Address(null, "UpdatedStr"),
                 Set.of(new Phone(null, "54321"))));
         var clientUpdated = dbServiceClient
-                .getClient(clientSecondSelected.getId())
-                .orElseThrow(() -> new RuntimeException("Client not found, id:" + clientSecondSelected.getId()));
+                .getClient(clientSecondSelected.id())
+                .orElseThrow(() -> new RuntimeException("Client not found, id:" + clientSecondSelected.id()));
         log.info("clientUpdated:{}", clientUpdated);
     }
 }
