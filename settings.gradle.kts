@@ -19,6 +19,7 @@ include("hw11-cache")
 include("hw12-web-server")
 include("hw13-handmade-ioc")
 include("hw14-spring")
+include("hw15-executors")
 
 pluginManagement {
     val foojayResolverConvention: String by settings
@@ -43,4 +44,3 @@ pluginManagement {
 
     }
 }
-include("hw14-spring")
