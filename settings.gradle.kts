@@ -20,6 +20,7 @@ include("hw12-web-server")
 include("hw13-handmade-ioc")
 include("hw14-spring")
 include("hw15-executors")
+include("hw16-queues")
 
 pluginManagement {
     val foojayResolverConvention: String by settings
