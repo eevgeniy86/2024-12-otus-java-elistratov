@@ -1,24 +1,23 @@
-package ru.otus.protobuf.service;
+package ru.otus.protobuf.server.service;
 
 public class SequenceGeneratorImpl implements SequenceGenerator {
     private final int lastValue;
-    private int next;
+    private int previous;
 
     public SequenceGeneratorImpl(int firstValue, int lastValue) {
         this.lastValue = lastValue;
-        this.next = firstValue;
+        this.previous = firstValue;
     }
 
     public boolean hasNext() {
-        return next <= lastValue;
+        return previous < lastValue;
     }
 
     public int getNext() {
 
-        if (next <= lastValue) {
-            var result = next;
-            next++;
-            return result;
+        if (previous < lastValue) {
+            previous++;
+            return previous;
         } else {
             throw new OutOfSequenceException("Next value is out of sequence bounds");
         }

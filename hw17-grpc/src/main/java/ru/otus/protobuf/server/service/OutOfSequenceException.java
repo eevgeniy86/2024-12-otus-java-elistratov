@@ -1,4 +1,4 @@
-package ru.otus.protobuf.service;
+package ru.otus.protobuf.server.service;
 
 public class OutOfSequenceException extends RuntimeException {
 

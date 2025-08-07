@@ -1,8 +1,7 @@
-package ru.otus.protobuf.service;
-
-import java.util.OptionalInt;
+package ru.otus.protobuf.server.service;
 
 public interface SequenceGenerator {
     boolean hasNext();
+
     int getNext();
 }

@@ -1,13 +1,11 @@
-package ru.otus.protobuf.service;
+package ru.otus.protobuf.server.service;
 
 import io.grpc.stub.StreamObserver;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import proto.v1.GetSequenceRequest;
 import proto.v1.GetSequenceResponse;
 import proto.v1.SequenceServiceGrpc;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @SuppressWarnings({"squid:S2142", "squid:S106"})
 public class RemoteSequenceService extends SequenceServiceGrpc.SequenceServiceImplBase {
@@ -37,6 +35,5 @@ public class RemoteSequenceService extends SequenceServiceGrpc.SequenceServiceIm
 
     private GetSequenceResponse convertValueToResponse(int value) {
         return GetSequenceResponse.newBuilder().setValue(value).build();
-
     }
 }
