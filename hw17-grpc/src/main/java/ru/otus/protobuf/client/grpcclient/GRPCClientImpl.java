@@ -4,7 +4,8 @@ import com.google.common.collect.Iterators;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
-import java.util.Deque;
+
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.CountDownLatch;
 import org.slf4j.Logger;
@@ -36,11 +37,11 @@ public class GRPCClientImpl implements GRPCClient, AutoCloseable {
         return Iterators.transform(responseIterator, GetSequenceResponse::getValue);
     }
 
-    public void getSequenceAsync(int firstValue, int lastValue, Deque<Integer> writeTo) throws InterruptedException {
+    public void getSequenceAsync(int firstValue, int lastValue, Collection<Integer> writeTo) throws InterruptedException {
         GetSequenceRequest getSequenceRequest = createGetSequenceRequest(firstValue, lastValue);
         var latch = new CountDownLatch(1);
         var stub = SequenceServiceGrpc.newStub(channel);
-        stub.getSequence(getSequenceRequest, new StreamObserver<GetSequenceResponse>() {
+        stub.getSequence(getSequenceRequest, new StreamObserver<>() {
             @Override
             public void onNext(GetSequenceResponse sequenceResponse) {
                 writeTo.add(sequenceResponse.getValue());
