@@ -22,6 +22,9 @@ include("hw14-spring")
 include("hw15-executors")
 include("hw16-queues")
 
+include ("hw18-webflux:client-service")
+include ("hw18-webflux:datastore-service")
+
 pluginManagement {
     val foojayResolverConvention: String by settings
     val dependencyManagement: String by settings
@@ -45,3 +48,4 @@ pluginManagement {
 
     }
 }
+include("hw18-webflux")
