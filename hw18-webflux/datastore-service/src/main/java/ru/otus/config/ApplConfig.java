@@ -1,4 +1,4 @@
-package ru.petrelevich.config;
+package ru.otus.config;
 
 import io.netty.channel.nio.NioEventLoopGroup;
 import java.util.concurrent.ThreadFactory;

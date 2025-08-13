@@ -1,4 +1,4 @@
-package ru.petrelevich.config;
+package ru.otus.config;
 
 import java.security.Principal;
 import java.util.Map;

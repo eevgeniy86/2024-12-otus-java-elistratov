@@ -1,4 +1,4 @@
-package ru.petrelevich.api;
+package ru.otus.api;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
-import ru.petrelevich.domain.Message;
-import ru.petrelevich.domain.MessageDto;
-import ru.petrelevich.service.DataStore;
+import ru.otus.domain.Message;
+import ru.otus.domain.MessageDto;
+import ru.otus.service.DataStore;
 
 @RestController
 public class DataController {

@@ -1,4 +1,4 @@
-package ru.petrelevich.config;
+package ru.otus.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
