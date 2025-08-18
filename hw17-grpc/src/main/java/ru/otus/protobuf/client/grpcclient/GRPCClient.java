@@ -1,10 +1,8 @@
 package ru.otus.protobuf.client.grpcclient;
 
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public interface GRPCClient {
-    Iterator<Integer> getSequenceSync(int firstValue, int lastValue);
 
-    void getSequenceAsync(int firstValue, int lastValue, Collection<Integer> writeTo) throws InterruptedException;
+    void getSequenceAsync(int firstValue, int lastValue, AtomicInteger writeTo) throws InterruptedException;
 }

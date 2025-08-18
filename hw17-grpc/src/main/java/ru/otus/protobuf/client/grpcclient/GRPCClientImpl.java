@@ -1,12 +1,10 @@
 package ru.otus.protobuf.client.grpcclient;
 
-import com.google.common.collect.Iterators;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import proto.v1.GetSequenceRequest;
@@ -27,24 +25,14 @@ public class GRPCClientImpl implements GRPCClient, AutoCloseable {
         logger.atInfo().setMessage("Client is ready").log();
     }
 
-    public Iterator<Integer> getSequenceSync(int firstValue, int lastValue) {
-        GetSequenceRequest getSequenceRequest = createGetSequenceRequest(firstValue, lastValue);
-
-        var stub = SequenceServiceGrpc.newBlockingStub(channel);
-        var responseIterator = stub.getSequence(getSequenceRequest);
-        logger.atInfo().setMessage("Got sequence from server sync").log();
-        return Iterators.transform(responseIterator, GetSequenceResponse::getValue);
-    }
-
-    public void getSequenceAsync(int firstValue, int lastValue, Collection<Integer> writeTo)
-            throws InterruptedException {
+    public void getSequenceAsync(int firstValue, int lastValue, AtomicInteger writeTo) throws InterruptedException {
         GetSequenceRequest getSequenceRequest = createGetSequenceRequest(firstValue, lastValue);
         var latch = new CountDownLatch(1);
         var stub = SequenceServiceGrpc.newStub(channel);
         stub.getSequence(getSequenceRequest, new StreamObserver<>() {
             @Override
             public void onNext(GetSequenceResponse sequenceResponse) {
-                writeTo.add(sequenceResponse.getValue());
+                writeTo.set(sequenceResponse.getValue());
                 logger.atInfo()
                         .setMessage("New value got from server async: {}")
                         .addArgument(sequenceResponse.getValue())
