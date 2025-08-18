@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.lang.NonNull;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -22,6 +23,9 @@ public class MessageController {
     private static final Logger logger = LoggerFactory.getLogger(MessageController.class);
 
     private static final String TOPIC_TEMPLATE = "/topic/response.";
+    private static final String TOPIC_TEMPLATE_OBSERVER = "/observe";
+    private static final String MYSTIC_ROOM_ID = "1408";
+
 
     private final WebClient datastoreClient;
     private final SimpMessagingTemplate template;
@@ -34,44 +38,49 @@ public class MessageController {
     @MessageMapping("/message.{roomId}")
     public void getMessage(@DestinationVariable("roomId") String roomId, Message message) {
         logger.info("get message:{}, roomId:{}", message, roomId);
-        if (!roomId.equals("1408")) {
+        if (!roomId.equals(MYSTIC_ROOM_ID)) {
             saveMessage(roomId, message).subscribe(msgId -> logger.info("message send id:{}", msgId));
             template.convertAndSend(
                     String.format("%s%s", TOPIC_TEMPLATE, roomId),
                     new Message(HtmlUtils.htmlEscape(message.messageStr())));
+
+            template.convertAndSend(TOPIC_TEMPLATE_OBSERVER, new Message(HtmlUtils.htmlEscape(message.messageStr())));
         } else {
-            logger.info("message: {} for room 1408 did not sent", message);
+            logger.info("message: {} for room 1408 rejected", message);
         }
     }
 
     @EventListener
-    public void handleSessionSubscribeEvent(SessionSubscribeEvent event) {
+    public void handleSessionSubscribeEvent(@NonNull SessionSubscribeEvent event) {
         var genericMessage = (GenericMessage<byte[]>) event.getMessage();
         var simpDestination = (String) genericMessage.getHeaders().get("simpDestination");
         if (simpDestination == null) {
             logger.error("Can not get simpDestination header, headers:{}", genericMessage.getHeaders());
             throw new ChatException("Can not get simpDestination header");
         }
-        if (!simpDestination.startsWith(TOPIC_TEMPLATE)) {
-            return;
-        }
-        var roomId = parseRoomId(simpDestination);
+        if (simpDestination.startsWith(TOPIC_TEMPLATE)) {
 
-        var principal = event.getUser();
-        if (principal == null) {
-            return;
-        }
-        logger.info("subscription for:{}, roomId:{}, user:{}", simpDestination, roomId, principal.getName());
-        // /user/f6532733-51db-4d0e-bd00-1267dddc7b21/topic/response.1
+            var roomId = parseRoomId(simpDestination);
 
-        if (roomId == 1408) {
-            getAllMessages()
-                    .doOnError(ex -> logger.error("getting ALL messages for roomId:{} failed", roomId, ex))
-                    .subscribe(message -> template.convertAndSendToUser(principal.getName(), simpDestination, message));
-        } else {
+            var principal = event.getUser();
+            if (principal == null) {
+                return;
+            }
+            logger.info("subscription for:{}, roomId:{}, user:{}", simpDestination, roomId, principal.getName());
+            // /user/f6532733-51db-4d0e-bd00-1267dddc7b21/topic/response.1
             getMessagesByRoomId(roomId)
                     .doOnError(ex -> logger.error("getting messages for roomId:{} failed", roomId, ex))
                     .subscribe(message -> template.convertAndSendToUser(principal.getName(), simpDestination, message));
+        }
+        if (simpDestination.startsWith(TOPIC_TEMPLATE_OBSERVER)) {
+            var principal = event.getUser();
+            if (principal == null) {
+                return;
+            }
+            logger.info("subscription for observation:{}, user:{}", simpDestination, principal.getName());
+            getAllMessages()
+                    .doOnError(ex -> logger.error("getting ALL messages for failed", ex))
+                    .subscribe(message -> template.convertAndSend(TOPIC_TEMPLATE_OBSERVER, message));
         }
     }
 

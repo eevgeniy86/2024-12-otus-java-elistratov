@@ -24,10 +24,19 @@ const connect = () => {
         setConnected(true);
         const userName = frame.headers["user-name"];
         console.log(`Connected to roomId: ${roomId} frame:${frame}`);
-        const topicName = `/topic/response.${roomId}`;
-        const topicNameUser = `/user/${userName}${topicName}`;
-        stompClient.subscribe(topicName, (message) => showMessage(JSON.parse(message.body).messageStr));
-        stompClient.subscribe(topicNameUser, (message) => showMessage(JSON.parse(message.body).messageStr));
+        var topicName = '';
+        var topicNameUser = '';
+        if (roomId === "1408") {
+            topicName = `/observe`;
+            stompClient.subscribe(topicName, (message) => showMessage(JSON.parse(message.body).messageStr));
+        }
+        else {
+            topicName = `/topic/response.${roomId}`;
+            topicNameUser = `/user/${userName}${topicName}`;
+            stompClient.subscribe(topicName, (message) => showMessage(JSON.parse(message.body).messageStr));
+            stompClient.subscribe(topicNameUser, (message) => showMessage(JSON.parse(message.body).messageStr));
+        }
+
     });
     if (roomId === "1408") {
         document.getElementById("send").disabled = true;
