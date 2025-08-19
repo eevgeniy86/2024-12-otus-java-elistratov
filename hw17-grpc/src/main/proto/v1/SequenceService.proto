@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package proto.v1;
+
+option java_multiple_files = true;
+
+message GetSequenceRequest {
+    int32 first_value = 1;
+    int32 last_value = 2;
+}
+
+message GetSequenceResponse {
+    int32 value = 1;
+}
+
+service SequenceService {
+    rpc GetSequence(GetSequenceRequest) returns (stream GetSequenceResponse);
+}
