@@ -21,6 +21,8 @@ include("hw13-handmade-ioc")
 include("hw14-spring")
 include("hw15-executors")
 include("hw16-queues")
+include("hw17-grpc")
+
 
 pluginManagement {
     val foojayResolverConvention: String by settings
@@ -31,6 +33,7 @@ pluginManagement {
     val spotless: String by settings
     val jgitver: String by settings
     val sonarlint: String by settings
+    val foojayresolver: String by settings
 
     plugins {
         // Apply the foojay-resolver plugin to allow automatic download of JDKs
@@ -42,6 +45,8 @@ pluginManagement {
         id("com.diffplug.spotless") version spotless
         id("fr.brouillard.oss.gradle.jgitver") version jgitver
         id("name.remal.sonarlint") version sonarlint
+        id("org.gradle.toolchains.foojay-resolver") version foojayresolver
+
 
     }
 }
